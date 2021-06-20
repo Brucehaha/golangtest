@@ -20,4 +20,8 @@ func main() {
 		}
 		writer.Write(all)
 	})
+	err := http.ListenAndServe(":8888", nil)
+	if err != nil {
+		panic(err)
+	}
 }
