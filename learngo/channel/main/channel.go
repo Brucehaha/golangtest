@@ -52,7 +52,7 @@ func createWorker(id int, wg *sync.WaitGroup) worker {
 //		<-worker.done
 //	}
 //}
-func chanDemo() {
+func ChanDemo() {
 	var workers [10]worker
 	var wg sync.WaitGroup
 	for i := 0; i < 10; i++ {
@@ -72,5 +72,5 @@ func chanDemo() {
 
 }
 func main() {
-	chanDemo()
+	ChanDemo()
 }
