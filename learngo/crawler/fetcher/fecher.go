@@ -22,9 +22,10 @@ func Fetch(url string) ([]byte, error) {
 	if resp.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("wrong status code: %v ", resp.StatusCode)
 	}
+
 	bufioReader := bufio.NewReader(resp.Body)
 	e, _ := determineEncoding(bufioReader)
-	newBody := transform.NewReader(resp.Body, e.NewEncoder())
+	newBody := transform.NewReader(bufioReader, e.NewEncoder())
 	return ioutil.ReadAll(newBody)
 
 }
