@@ -15,7 +15,7 @@ func TestParseCityList(t *testing.T) {
 		"阿坝", "阿克苏", "阿拉善盟",
 	}
 	urls := []string{
-		"http://www.zhenai.com/zhenghun/aba", "http://www.zhenai.com/zhenghun/akesu", "http://www.zhenai.com/zhenghun/akesu",
+		"http://www.zhenai.com/zhenghun/aba", "http://www.zhenai.com/zhenghun/akesu", "http://www.zhenai.com/zhenghun/alashanmeng",
 	}
 
 	const resultSize = 470
