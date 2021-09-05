@@ -1,8 +1,10 @@
 package parser
 
 import (
+	"log"
 	"regexp"
 	"strconv"
+	"strings"
 
 	"brucego.com/learngo/crawler/engine"
 	"brucego.com/learngo/crawler/model"
@@ -105,6 +107,7 @@ func ParseProfile(content []byte, name string) engine.ParseResult {
 
 	results := engine.ParseResult{}
 	results.Items = append(results.Items, profile)
+	log.Printf("Profile %v", results.Items)
 
 	return results
 
@@ -113,7 +116,7 @@ func ParseProfile(content []byte, name string) engine.ParseResult {
 func compileProfileField(re *regexp.Regexp, content []byte) string {
 	result := re.FindSubmatch(content)
 	if result != nil {
-		return string(result[1])
+		return strings.Trim(string(result[1]), " ")
 
 	}
 	return ""

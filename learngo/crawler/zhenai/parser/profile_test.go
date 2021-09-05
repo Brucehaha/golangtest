@@ -2,6 +2,7 @@ package parser
 
 import (
 	"io/ioutil"
+	"reflect"
 	"testing"
 
 	"brucego.com/learngo/crawler/model"
@@ -21,70 +22,84 @@ import (
 // Horoscope  string
 // House      string
 // Car        string
+var profile1 = model.Profile{
+	Name:       "美丽心晴",
+	Gender:     "女",
+	Age:        34,
+	Height:     157,
+	Weight:     0,
+	Income:     "3-5千",
+	Marriage:   "离异",
+	Education:  "中专",
+	Occupation: "",
+	Location:   "安康汉阴",
+	Hometown:   "陕西安康",
+	Horoscope:  "魔羯座(12.22-01.19)",
+	House:      "租房",
+	Car:        "已买车",
+}
+var profile2 = model.Profile{
+	Name:       "与Ta相濡以沫 ",
+	Gender:     "女",
+	Age:        40,
+	Height:     160,
+	Weight:     65,
+	Income:     "3千以下",
+	Marriage:   "离异",
+	Education:  "高中及以下",
+	Occupation: "自由职业",
+	Location:   "安康汉滨区",
+	Hometown:   "四川攀枝花",
+	Horoscope:  "天蝎座(10.23-11.21)",
+	House:      "租房",
+	Car:        "未买车",
+}
+var profile3 = model.Profile{
+	Name:       "大树 ",
+	Gender:     "男",
+	Age:        40,
+	Height:     160,
+	Weight:     65,
+	Income:     "5-8千",
+	Marriage:   "离异",
+	Education:  "大学本科",
+	Occupation: "人事总监",
+	Location:   "安康市辖区",
+	Hometown:   "陕西安康",
+	Horoscope:  "魔羯座(12.22-01.19)",
+	House:      "已购房",
+	Car:        "未买车",
+}
+
+var profileMap = map[model.Profile]string{
+	profile1: "test_fixture/profile.html",
+	profile2: "test_fixture/profile2.html",
+	profile3: "test_fixture/profile3.html",
+}
+
 func TestParseProfile(t *testing.T) {
 
-	content, err := ioutil.ReadFile("profile.html")
-	if err != nil {
-		panic(err)
-	}
-	results := ParseProfile(content, "test")
-	profile := results.Items[0].(model.Profile)
-	if profile.Name != "test" {
-		t.Errorf("Gender should be %v instead of test", profile.Name)
+	for key, value := range profileMap {
+		content, err := ioutil.ReadFile(value)
+		if err != nil {
+			panic(err)
+		}
+		results := ParseProfile(content, key.Name)
+		profileReal := results.Items[0].(model.Profile)
 
-	}
-	if profile.Gender != "女" {
-		t.Errorf("Gender should be %v instead of 女", profile.Gender)
+		fields := reflect.TypeOf(key)
+		values := reflect.ValueOf(key)
+		resultsValues := reflect.ValueOf(profileReal)
+		num := fields.NumField()
 
-	}
-
-	if profile.Age != 34 {
-		t.Errorf("Age should be %v ", profile.Age)
-
-	}
-	if profile.Height != 157 {
-		t.Errorf("Height should be %v ", profile.Height)
-
-	}
-	if profile.Weight != 0 {
-		t.Errorf("Weight should be %v ", profile.Weight)
-
-	}
-	if profile.Income != "3-5千" {
-		t.Errorf("Income should be %v ", profile.Income)
-
-	}
-	if profile.Marriage != "离异" {
-		t.Errorf("Marriage should be %v", profile.Marriage)
-
-	}
-
-	if profile.Education != "中专" {
-		t.Errorf("Education should be %v ", profile.Education)
-
-	}
-	if profile.Occupation != "" {
-		t.Errorf("Occupation should be %v ", profile.Occupation)
-
-	}
-	if profile.Location != "安康汉阴" {
-		t.Errorf("Location should be %v ", profile.Location)
-
-	}
-	if profile.Hometown != "陕西安康" {
-		t.Errorf("Hometown should be %v ", profile.Hometown)
-
-	}
-	if profile.Horoscope != "魔羯座(12.22-01.19)" {
-		t.Errorf("Horoscope should be %v ", profile.Horoscope)
-
-	}
-	if profile.Car != "已买车" {
-		t.Errorf("Car should be %v ", profile.Car)
-
-	}
-	if profile.House != "租房" {
-		t.Errorf("House should be %v ", profile.House)
+		for i := 0; i < num; i++ {
+			field := fields.Field(i)
+			value := values.Field(i)
+			resultsValue := resultsValues.Field(i)
+			if value.String() != resultsValue.String() {
+				t.Errorf("%s %s should be %s:%s, instead of %s", key.Name, field.Name, field.Name, resultsValue, value)
+			}
+		}
 
 	}
 }

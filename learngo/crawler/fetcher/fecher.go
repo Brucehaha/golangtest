@@ -8,13 +8,21 @@ import (
 	"net/http"
 
 	"golang.org/x/text/encoding"
+	"golang.org/x/text/encoding/unicode"
 	"golang.org/x/text/transform"
 
 	"golang.org/x/net/html/charset"
 )
 
-func Fetch(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+func Fetch(url string, headers map[string]string) ([]byte, error) {
+
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", url, nil)
+	for key, value := range headers {
+		req.Header.Set(key, value)
+	}
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -24,17 +32,17 @@ func Fetch(url string) ([]byte, error) {
 	}
 
 	bufioReader := bufio.NewReader(resp.Body)
-	e, _ := determineEncoding(bufioReader)
+	e := determineEncoding(bufioReader)
 	newBody := transform.NewReader(bufioReader, e.NewEncoder())
 	return ioutil.ReadAll(newBody)
 
 }
-func determineEncoding(r *bufio.Reader) (e encoding.Encoding, name string) {
+func determineEncoding(r *bufio.Reader) encoding.Encoding {
 	bytes, err := r.Peek(1024)
 	if err != nil {
-		panic(err)
+		return unicode.UTF8
 	}
-	e, names, _ := charset.DetermineEncoding(bytes, "")
-	return e, names
+	e, _, _ := charset.DetermineEncoding(bytes, "")
+	return e
 
 }
