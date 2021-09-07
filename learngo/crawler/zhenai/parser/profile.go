@@ -10,45 +10,58 @@ import (
 	"brucego.com/learngo/crawler/model"
 )
 
-// <div data-v-8b1eac0c="" class="purple-btns">
-// <div data-v-8b1eac0c="" class="m-btn purple">未婚</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">34岁</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">魔羯座(12.22-01.19)</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">182cm</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">79kg</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">工作地:大连庄河市</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">月收入:5-8千</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">财务经理</div>
-// <div data-v-8b1eac0c="" class="m-btn purple">大学本科</div>
-// </div>
-// Name       string
-// Gender     string
-// Age        int
-// Height     int
-// Weight     int
-// Income     string
-// Marriage   string
-// Education  string
-// Occupation string
-// Location   string
-// Hometown   string
-// Horoscope  string
-// House      string
-// Car        string
+// {
+// 	"data": {
+// 	  "age": 30,
+// 	  "avatarURL": "https://photo.zastatic.com/images/photo/297633/1190530908/63183738655096038.png",
+// 	  "basicInfo": [
+// 		"未婚",
+// 		"30岁",
+// 		"魔羯座(12.22-01.19)",
+// 		"165cm",
+// 		"52kg",
+// 		"工作地:长春朝阳区",
+// 		"月收入:5-8千",
+// 		"运营管理",
+// 		"大专"
+// 	  ],
+// 	  "detailInfo": [
+// 		"汉族",
+// 		"籍贯:吉林长春",
+// 		"体型:丰满",
+// 		"不吸烟",
+// 		"不喝酒",
+// 		"已买车",
+// 		"没有小孩",
+// 		"是否想要孩子:想要孩子",
+// 		"何时结婚:时机成熟就结婚"
+// 	  ],
+// 	  "educationString": "大专",
+// 	  "genderString": "女士",
+// 	  "heightString": "165cm",
+// 	  "introduceContent": "喜欢高个子的暖男，不喜欢瘦的男生！非诚勿扰！",
+// 	  "marriageString": "未婚",
+// 	  "nickname": "少女心",
+// 	  "salaryString": "5001-8000元",
+// 	  "workCityString": "长春",
+// 	  "workProvinceCityString": "长春朝阳区"
+// 	},
 
-var genderRe = regexp.MustCompile(`<a href="http://www.zhenai.com/zhenghun/[^>]*>[^>男女]*(.)士征婚</a>`)
-var ageRe = regexp.MustCompile(`<div [^>]+>(\d+)岁</div>`)
-var marriageRe = regexp.MustCompile(`<div [^>]+>([^>]+)</div><div [^>]+>\d+岁</div>`)
-var heightRe = regexp.MustCompile(`<div [^>]+>(\d+)cm</div>`)
-var weightRe = regexp.MustCompile(`<div [^>]+>(\d+)kg</div>`)
-var LocationRe = regexp.MustCompile(`<div [^>]+>工作地:([^>]*)</div>`)
-var incomeRe = regexp.MustCompile(`<div [^>]+>[^<>]*收入:([^<>]*)</div>`)
-var occupationRe = regexp.MustCompile(`<div [^>]+>[^<>]*收入:[^<>]*</div><div [^>]+>([^>]*)</div>`)
-var educationRe = regexp.MustCompile(`<div [^>]+>[^<>]*收入:[^>]+</div><div [^>]+>[^><]*</div><div [^>]+>([^>]*)</div>`)
-var houseRe = regexp.MustCompile(`<div [^>]+>([^>]*房)</div>`)
-var carRe = regexp.MustCompile(`<div [^>]+>([^>]*车)</div>`)
-var horoscopeRe = regexp.MustCompile(`<div [^>]+>\d+岁</div><div [^>]+>([^>]*)</div>`)
-var hometownRe = regexp.MustCompile(`<div [^>]+>籍贯:([^>]*)</div>`)
+//   }
+
+var genderRe = regexp.MustCompile(`"genderString":"([^,]*)"`)
+var ageRe = regexp.MustCompile(`"age":(\d+)`)
+var marriageRe = regexp.MustCompile(`"marriageString":"([^,]*)"`)
+var heightRe = regexp.MustCompile(`"heightString":"([^,]*)cm"`)
+var weightRe = regexp.MustCompile(`"(\d+)kg"`)
+var LocationRe = regexp.MustCompile(`"workProvinceCityString":"([^,]*)"`)
+var incomeRe = regexp.MustCompile(`"salaryString":"([^,"]*)"`)
+var occupationRe = regexp.MustCompile(`"月收入:[^,"]*","([^,"]*)"[^\]]`)
+var educationRe = regexp.MustCompile(`"educationString":"([^,]*)"`)
+var houseRe = regexp.MustCompile(`"([^,"]*房)"`)
+var carRe = regexp.MustCompile(`"([^,"]*车)"`)
+var horoscopeRe = regexp.MustCompile(`"([^",]*座\(\d+.\d+-\d+.\d+\))"`)
+var hometownRe = regexp.MustCompile(`"籍贯:([^",]*)"`)
 
 func ParseProfile(content []byte, name string) engine.ParseResult {
 	profile := model.Profile{}
@@ -107,7 +120,7 @@ func ParseProfile(content []byte, name string) engine.ParseResult {
 
 	results := engine.ParseResult{}
 	results.Items = append(results.Items, profile)
-	log.Printf("Profile %v", results.Items)
+	log.Printf("Profile %+v", results.Items)
 
 	return results
 
